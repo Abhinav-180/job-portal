@@ -27,7 +27,7 @@ const appRouter = createBrowserRouter([
   { path: "/Profile", element: <Profile /> },
   { path: "/description/:id", element: <Description /> },
 
-  // ✅ Fixed — lowercase paths match Footer links
+  //  Fixed — lowercase paths match Footer links
   { path: "/privacy", element: <PrivacyPolicy /> },
   { path: "/terms", element: <TermsofService /> },
 

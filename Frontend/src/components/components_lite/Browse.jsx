@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import Navbar from "./Navbar";
 import Job1 from "./Job1";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,7 +8,7 @@ import { Search } from "lucide-react";
 
 const Browse = () => {
   useGetAllJobs();
-  const { allJobs } = useSelector((store) => store.job);
+  const { allJobs, searchedQuery } = useSelector((store) => store.job);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -16,6 +16,33 @@ const Browse = () => {
       dispatch(setSearchedQuery(""));
     };
   }, []);
+
+  // Client-side filtering based on searchedQuery
+  const filteredJobs = useMemo(() => {
+    if (!searchedQuery || searchedQuery.trim() === "") {
+      return allJobs;
+    }
+    const query = searchedQuery.toLowerCase().trim();
+    const words = query.split(/\s+/).filter(Boolean);
+
+    return allJobs.filter((job) => {
+      const title = (job?.title || "").toLowerCase();
+      const description = (job?.description || "").toLowerCase();
+      const location = (job?.location || "").toLowerCase();
+      const jobType = (job?.jobType || "").toLowerCase();
+      const companyName = (job?.company?.name || "").toLowerCase();
+
+      // Match if ANY word from the query matches any field
+      return words.some(
+        (word) =>
+          title.includes(word) ||
+          description.includes(word) ||
+          location.includes(word) ||
+          jobType.includes(word) ||
+          companyName.includes(word)
+      );
+    });
+  }, [allJobs, searchedQuery]);
 
   return (
     <div className="min-h-screen bg-[#0a0a14]">
@@ -29,13 +56,15 @@ const Browse = () => {
             <span className="text-[#a78bfa] text-xs font-semibold tracking-widest uppercase">Search Results</span>
           </div>
           <h1 className="text-white text-3xl font-extrabold">
-            {allJobs.length}{" "}
+            {filteredJobs.length}{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#a78bfa] to-[#c084fc]">
-              {allJobs.length === 1 ? "Job" : "Jobs"} Found
+              {filteredJobs.length === 1 ? "Job" : "Jobs"} Found
             </span>
           </h1>
           <p className="text-[#64748b] text-sm mt-1">
-            Showing all available positions matching your search.
+            {searchedQuery
+              ? `Showing results for "${searchedQuery}"`
+              : "Showing all available positions."}
           </p>
         </div>
 
@@ -43,7 +72,7 @@ const Browse = () => {
         <div className="border-t border-white/6 mb-8" />
 
         {/* Grid */}
-        {allJobs.length === 0 ? (
+        {filteredJobs.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 gap-4">
             <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/8 flex items-center justify-center text-2xl">🔍</div>
             <p className="text-white font-semibold">No results found</p>
@@ -51,7 +80,7 @@ const Browse = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {allJobs.map((job) => (
+            {filteredJobs.map((job) => (
               <Job1 key={job._id} job={job} />
             ))}
           </div>

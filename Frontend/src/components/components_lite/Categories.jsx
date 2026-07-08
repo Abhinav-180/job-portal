@@ -31,7 +31,7 @@ const Categories = () => {
 
   const searchjobHandler = (query) => {
     dispatch(setSearchedQuery(query));
-    navigate("/browse");
+    navigate("/Browse");
   };
 
   return (

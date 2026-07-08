@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setLoading, setUser } from "@/redux/authSlice";
 import { Mail, Lock, Loader2, Zap } from "lucide-react";
 
+
 const Login = () => {
   const [input, setInput] = useState({ email: "", password: "", role: "" });
   const navigate = useNavigate();
@@ -109,8 +110,8 @@ const Login = () => {
                   <label
                     key={role}
                     className={`flex items-center justify-center gap-2 py-2.5 rounded-xl border cursor-pointer transition-all duration-200 text-sm font-medium ${input.role === role
-                        ? "border-[#6A38C2]/60 bg-[#6A38C2]/20 text-[#a78bfa]"
-                        : "border-white/8 bg-white/[0.02] text-[#64748b] hover:border-white/15 hover:text-white"
+                      ? "border-[#6A38C2]/60 bg-[#6A38C2]/20 text-[#a78bfa]"
+                      : "border-white/8 bg-white/[0.02] text-[#64748b] hover:border-white/15 hover:text-white"
                       }`}
                   >
                     <input

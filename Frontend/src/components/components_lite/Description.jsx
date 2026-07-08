@@ -7,7 +7,7 @@ import { setSingleJob } from "@/redux/jobSlice";
 import { toast } from "sonner";
 import Navbar from "./Navbar";
 import {
-  MapPin, DollarSign, Briefcase, Users, Clock,
+  MapPin, Briefcase, Users, Clock,
   CalendarDays, CheckCircle2, ArrowLeft, Zap,
 } from "lucide-react";
 
@@ -38,6 +38,11 @@ const Description = () => {
   const [isApplied, setIsApplied] = useState(isInitiallyApplied);
 
   const applyJobHandler = async () => {
+    if (!user) {
+      toast.error("Please Login or Register first");
+      navigate("/login");
+      return;
+    }
     setApplying(true);
     try {
       const res = await axios.get(`${APPLICATION_API_ENDPOINT}/apply/${jobId}`, {
@@ -112,7 +117,7 @@ const Description = () => {
   const details = [
     { icon: Users, label: "Open Positions", value: `${singleJob?.position} Positions` },
     { icon: MapPin, label: "Location", value: singleJob?.location },
-    { icon: DollarSign, label: "Salary", value: `${singleJob?.salary} LPA` },
+    { icon: Briefcase, label: "Salary", value: `${singleJob?.salary} LPA` },
     { icon: Briefcase, label: "Job Type", value: singleJob?.jobType },
     { icon: Clock, label: "Experience", value: `${singleJob?.experienceLevel} Year${singleJob?.experienceLevel > 1 ? "s" : ""}` },
     { icon: Users, label: "Total Applicants", value: singleJob?.applications?.length ?? 0 },
@@ -151,7 +156,7 @@ const Description = () => {
                       <Users className="w-3 h-3" /> {singleJob?.position} Positions
                     </span>
                     <span className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-[#10B981]/10 text-[#34d399] border border-[#10B981]/20">
-                      <DollarSign className="w-3 h-3" /> {singleJob?.salary} LPA
+                      {singleJob?.salary} LPA
                     </span>
                     <span className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-[#8B5CF6]/10 text-[#a78bfa] border border-[#8B5CF6]/20">
                       <Briefcase className="w-3 h-3" /> {singleJob?.jobType}

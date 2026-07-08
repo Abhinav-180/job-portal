@@ -31,6 +31,19 @@ export const postJob = async (req, res) => {
         success: false,
       });
     }
+    // Check for duplicate job (same title + company + creator)
+    const existingJob = await Job.findOne({
+      title,
+      company: companyId,
+      created_by: userId,
+    });
+    if (existingJob) {
+      return res.status(409).json({
+        message: "This job has already been posted by you for this company.",
+        success: false,
+      });
+    }
+
     const job = await Job.create({
       title,
       description,
@@ -58,12 +71,19 @@ export const postJob = async (req, res) => {
 export const getAllJobs = async (req, res) => {
   try {
     const keyword = req.query.keyword || "";
-    const query = {
-      $or: [
-        { title: { $regex: keyword, $options: "i" } },
-        { description: { $regex: keyword, $options: "i" } },
-      ],
-    };
+    let query = {};
+    if (keyword.trim()) {
+      // Split keyword into individual words and search for ANY match
+      const words = keyword.trim().split(/\s+/).filter(Boolean);
+      const regexPattern = words.join("|"); // "Frontend Developer" => "Frontend|Developer"
+      query = {
+        $or: [
+          { title: { $regex: regexPattern, $options: "i" } },
+          { description: { $regex: regexPattern, $options: "i" } },
+          { location: { $regex: regexPattern, $options: "i" } },
+        ],
+      };
+    }
     const jobs = await Job.find(query)
       .populate({
         path: "company",

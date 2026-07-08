@@ -1,11 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { MapPin, Briefcase, DollarSign, Users, ArrowUpRight } from "lucide-react";
+import { MapPin, Briefcase, Users, ArrowUpRight } from "lucide-react";
+import { Avatar, AvatarImage } from "../ui/avatar";
 
 const JobCards = ({ job }) => {
   const navigate = useNavigate();
 
-  // Generate a consistent color from company name
   const colors = [
     { bg: "#6A38C2", light: "rgba(106,56,194,0.15)", border: "rgba(106,56,194,0.35)" },
     { bg: "#0EA5E9", light: "rgba(14,165,233,0.15)", border: "rgba(14,165,233,0.35)" },
@@ -14,9 +14,14 @@ const JobCards = ({ job }) => {
     { bg: "#F59E0B", light: "rgba(245,158,11,0.15)", border: "rgba(245,158,11,0.35)" },
     { bg: "#8B5CF6", light: "rgba(139,92,246,0.15)", border: "rgba(139,92,246,0.35)" },
   ];
-  const color = colors[(job?.name?.charCodeAt(0) || 0) % colors.length];
 
-  const initials = (job?.name || "?")
+  const companyName = job?.company?.name || job?.name || "Company";
+  const companyLogo = job?.company?.logo;
+  const companyLocation = job?.company?.location || job?.location || "India";
+
+  const color = colors[(companyName?.charCodeAt(0) || 0) % colors.length];
+
+  const initials = companyName
     .split(" ")
     .map((w) => w[0])
     .join("")
@@ -39,15 +44,21 @@ const JobCards = ({ job }) => {
         <div className="flex items-center gap-3">
           {/* Logo / initials */}
           <div
-            className="w-10 h-10 rounded-xl flex items-center justify-center text-xs font-bold shrink-0 transition-transform duration-200 group-hover:scale-105"
+            className="w-10 h-10 rounded-xl flex items-center justify-center text-xs font-bold shrink-0 transition-transform duration-200 group-hover:scale-105 overflow-hidden"
             style={{ background: color.light, border: `1px solid ${color.border}`, color: color.bg }}
           >
-            {initials}
+            {companyLogo ? (
+              <Avatar className="w-10 h-10 rounded-xl">
+                <AvatarImage src={companyLogo} className="object-cover" />
+              </Avatar>
+            ) : (
+              initials
+            )}
           </div>
           <div>
-            <p className="text-white text-sm font-semibold leading-tight">{job?.name || "Company"}</p>
+            <p className="text-white text-sm font-semibold leading-tight">{companyName}</p>
             <p className="text-[#64748b] text-xs mt-0.5 flex items-center gap-1">
-              <MapPin className="w-3 h-3" /> {job?.location || "India"}
+              <MapPin className="w-3 h-3" /> {companyLocation}
             </p>
           </div>
         </div>
@@ -67,13 +78,12 @@ const JobCards = ({ job }) => {
       </div>
 
       {/* Badges */}
-      <div className="flex flex-wrap gap-2 mt-auto pt-1 border-t border-white/6">
+      <div className="flex flex-wrap gap-2 mt-auto pt-3 border-t border-white/6">
         <span className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-[#0EA5E9]/10 text-[#38bdf8] border border-[#0EA5E9]/20">
           <Users className="w-3 h-3" />
           {job?.position} Positions
         </span>
         <span className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-[#10B981]/10 text-[#34d399] border border-[#10B981]/20">
-          <DollarSign className="w-3 h-3" />
           {job?.salary} LPA
         </span>
         <span className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-[#8B5CF6]/10 text-[#a78bfa] border border-[#8B5CF6]/20">

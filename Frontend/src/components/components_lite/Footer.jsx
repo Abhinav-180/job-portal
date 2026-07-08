@@ -23,7 +23,7 @@ const Footer = () => {
               </span>
             </div>
             <p className="text-[#64748b] text-sm leading-relaxed max-w-xs">
-              India's #1 platform connecting top talent with life-changing opportunities. Built with passion by Abhinav Singh.
+              India's #1 platform connecting top talent with life-changing opportunities.
             </p>
             {/* Social icons */}
             <div className="flex items-center gap-2 mt-1">
@@ -97,20 +97,9 @@ const Footer = () => {
         </div>
 
         {/* Bottom bar */}
-        <div className="pt-6 border-t border-white/6 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="pt-6 border-t border-white/6 flex items-center justify-center">
           <p className="text-[#475569] text-xs">
             © {new Date().getFullYear()} JobPortal. All rights reserved.
-          </p>
-          <p className="text-[#475569] text-xs flex items-center gap-1.5">
-            Designed &amp; Developed by
-            <a
-              href="https://github.com/Abhinav-180"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#a78bfa] hover:text-[#c084fc] transition-colors duration-150 font-medium"
-            >
-              Abhinav Singh
-            </a>
           </p>
         </div>
       </div>

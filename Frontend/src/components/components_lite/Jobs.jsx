@@ -16,15 +16,69 @@ const Jobs = () => {
       setFilterJobs(allJobs);
       return;
     }
-    const query = searchedQuery.toLowerCase();
+    const query = searchedQuery.toLowerCase().trim();
+
+    // Check if query is a salary range like "0-50k", "50k-100k", "100k-200k", "200k+"
+    const salaryMatch = query.match(/^(\d+)k?-(\d+)k\+?$|^(\d+)k\+$/);
+    if (salaryMatch) {
+      let minSalary, maxSalary;
+      if (salaryMatch[3]) {
+        // Pattern: "200k+"
+        minSalary = parseInt(salaryMatch[3]) * 1000;
+        maxSalary = Infinity;
+      } else {
+        // Pattern: "0-50k" or "50k-100k"
+        minSalary = parseInt(salaryMatch[1]) * (salaryMatch[0].includes('k') && !salaryMatch[0].startsWith(salaryMatch[1] + 'k') ? 1 : 1);
+        maxSalary = parseInt(salaryMatch[2]) * 1000;
+        // Handle cases like "0-50k" where first number has no k
+        if (salaryMatch[1] && !query.startsWith(salaryMatch[1] + 'k')) {
+          minSalary = parseInt(salaryMatch[1]);
+        } else {
+          minSalary = parseInt(salaryMatch[1]) * 1000;
+        }
+      }
+      // Convert LPA salary to comparable value (salary in DB is in LPA, filter is in k)
+      // Salary in DB: 25 means 25 LPA = 2500000 per year = ~2500k? No, let's treat filter as LPA too
+      // Actually filter values are "0-50k", "50k-100k" — these seem to be in thousands (₹ per month?) or annual
+      // Since DB stores salary as LPA (e.g. 25), let's convert filter to LPA:
+      // 0-50k => 0-50 LPA, 50k-100k => 50-100 LPA, 100k-200k => 100-200 LPA, 200k+ => 200+ LPA
+      minSalary = parseInt(salaryMatch[3] || salaryMatch[1]);
+      maxSalary = salaryMatch[3] ? Infinity : parseInt(salaryMatch[2]);
+      
+      setFilterJobs(
+        allJobs.filter((job) => {
+          const sal = parseFloat(job.salary);
+          if (isNaN(sal)) return false;
+          return sal >= minSalary && sal <= maxSalary;
+        })
+      );
+      return;
+    }
+
+    // Check if query is an experience range like "0-3 years", "3-5 years", "5-7 years", "7+ years"
+    const expMatch = query.match(/^(\d+)-(\d+)\s*years?$|^(\d+)\+\s*years?$/);
+    if (expMatch) {
+      const minExp = parseInt(expMatch[3] || expMatch[1]);
+      const maxExp = expMatch[3] ? Infinity : parseInt(expMatch[2]);
+      setFilterJobs(
+        allJobs.filter((job) => {
+          const exp = parseFloat(job.experienceLevel ?? job.experience);
+          if (isNaN(exp)) return false;
+          return exp >= minExp && exp <= maxExp;
+        })
+      );
+      return;
+    }
+
+    // Default: text-based search across multiple fields
     setFilterJobs(
       allJobs.filter(
         (job) =>
           job.title?.toLowerCase().includes(query) ||
           job.description?.toLowerCase().includes(query) ||
           job.location?.toLowerCase().includes(query) ||
-          job.experience?.toLowerCase().includes(query) ||
-          job.salary?.toLowerCase().includes(query)
+          job.jobType?.toLowerCase().includes(query) ||
+          job.company?.name?.toLowerCase().includes(query)
       )
     );
   }, [allJobs, searchedQuery]);

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bookmark, BookmarkCheck, MapPin, DollarSign, Users, Briefcase, ArrowUpRight } from "lucide-react";
+import { Bookmark, BookmarkCheck, MapPin, Users, Briefcase, ArrowUpRight } from "lucide-react";
 import { Avatar, AvatarImage } from "../ui/avatar";
 
 const Job1 = ({ job }) => {
@@ -13,7 +13,6 @@ const Job1 = ({ job }) => {
     return days === 0 ? "Today" : `${days}d ago`;
   };
 
-  // Color from company name
   const colors = [
     { bg: "rgba(106,56,194,0.15)", border: "rgba(106,56,194,0.35)", text: "#6A38C2" },
     { bg: "rgba(14,165,233,0.15)", border: "rgba(14,165,233,0.35)", text: "#0EA5E9" },
@@ -67,7 +66,7 @@ const Job1 = ({ job }) => {
         <div>
           <p className="text-white text-sm font-semibold leading-tight">{job?.company?.name}</p>
           <p className="text-[#64748b] text-xs mt-0.5 flex items-center gap-1">
-            <MapPin className="w-3 h-3" /> India
+            <MapPin className="w-3 h-3" /> {job?.location || "India"}
           </p>
         </div>
         {/* Arrow appears on hover */}
@@ -91,7 +90,7 @@ const Job1 = ({ job }) => {
           <Briefcase className="w-3 h-3" /> {job?.jobType}
         </span>
         <span className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-[#10B981]/10 text-[#34d399] border border-[#10B981]/20">
-          <DollarSign className="w-3 h-3" /> {job?.salary} LPA
+          {job?.salary} LPA
         </span>
       </div>
 

@@ -51,8 +51,13 @@ const PostJob = () => {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
       });
-      if (res.data.success) {
+      if (res.data.status) {
         toast.success(res.data.message);
+        // Reset form to prevent duplicate submissions
+        setInput({
+          title: "", description: "", requirements: "", salary: "",
+          location: "", jobType: "", experience: "", position: 0, companyId: "",
+        });
         navigate("/admin/jobs");
       } else {
         toast.error(res.data.message);
